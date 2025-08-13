@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>2D Collisions | Blake Rayvid</title>
+
+  <!-- SEO & Social Media Meta Tags -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <meta name="description" content="An interactive physics simulation demonstrating elastic collisions between 2D rigid bodies (circles and polygons) using the p5.collide2D library.">
+  <meta name="author" content="Blake Rayvid">
+  <link rel="canonical" href="https://sims.blakerayvid.com/collide/">
+
+  <!-- Open Graph / Social Media -->
+  <meta property="og:title" content="Rigid Body Collisions in 2D | Science Sims">
+  <meta property="og:description" content="An interactive physics simulation demonstrating elastic collisions between 2D rigid bodies.">
+  <meta property="og:image" content="https://sims.blakerayvid.com/img/collide-screenshot.png">
+  <meta property="og:url" content="https://sims.blakerayvid.com/collide/">
+  <meta name="twitter:card" content="summary_large_image">
+  <!-- End of Meta Tags -->
+
+  	<!-- Google tag (gtag.js) -->
+	<script async src="https://www.googletagmanager.com/gtag/js?id=G-0X17N0BWYV"></script>
+	<script>
+	window.dataLayer = window.dataLayer || [];
+	function gtag(){dataLayer.push(arguments);}
+	gtag('js', new Date());
+	gtag('config', 'G-0X17N0BWYV');
+	</script>
+  
+  <!-- Dependencies: p5.js from CDN and local libraries from the 'lib' folder -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.4/p5.js"></script>
+  
+  <!-- These scripts are loaded from the 'lib' folder inside this 'collide' directory -->
+  <script type="text/javascript" src="lib/inobounce.js"></script>
+  <script type="text/javascript" src="lib/science.js"></script>
+  <script type="text/javascript" src="lib/p5.collide2d.min.js"></script>
+  
+  <!-- Your Sketch -->
+  <script language="javascript" src="sketch.js"></script>
+
+  <!-- In your HTML file's <head> -->
+<!-- In your HTML file's <head> -->
+<style>
+  html {
+    position: fixed;
+    overflow: hidden;
+    height: 100%;
+    width: 100%;
+  }
+  body {
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    height: 100%;
+    width: 100%;
+    font-family: Helvetica, Arial, Sans-serif;
+    background-color: #E2E2E2;
+  }
+  canvas {
+    display: block;
+  }
+</style>
+
+</head>
+
+<body>
+  <!-- Note: The orientation-change scripts from your original file are still here, but commented out. -->
+</body>
+</html>

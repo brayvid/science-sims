@@ -1,0 +1,133 @@
+/* === CSS Grid Gallery === */
+
+/* 1. Basic Layout Reset (kept from your original) */
+html, body {
+  height: auto;
+}
+#container {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 15px;
+}
+#footer {
+  position: static;
+  padding: 2em 0;
+}
+
+/* 2. The Grid Container */
+#sketch-list {
+  display: grid;
+  /* Create responsive columns that are at least 320px wide but can grow */
+  /* grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); */
+  gap: 15px; /* The space between gallery items */
+}
+
+/* --- Desktop: Single Column Layout --- */
+@media (min-width: 768px) {
+  #sketch-list {
+    grid-template-columns: 1fr; /* Force one full-width column */
+    gap: 40px; /* Increase vertical gap for better separation */
+  }
+}
+
+/* 3. Grid Items & Captions */
+.sketch-link {
+  /* This is your <a> tag, now acting as the grid item */
+  position: relative; /* Essential for positioning the caption inside it */
+  display: block;      /* Make the link behave like a container */
+  overflow: hidden;    /* Hide parts of the caption when it's off-screen */
+  /* Re-apply the border from your original styles */
+  border-top: 1px solid #222;
+  border-right: 1px solid #222;
+  border-left: 1px solid #000;
+  border-bottom: 1px solid #000;
+}
+
+.sketch-link img {
+  display: block; /* Removes tiny space below the image */
+  width: 100%;
+  height: auto; /* Let the image scale proportionally */
+}
+
+.sketch-link .caption {
+  /* This styles the existing <div class="caption"> */
+  position: absolute;
+  bottom: 0; /* Position at the bottom of the link */
+  left: 0;
+  width: 100%;
+  z-index: 2;
+  background-color: rgba(0, 0, 0, .7); /* Slightly darker for better contrast */
+  color: #fff;
+  text-align: center;
+  padding: .75em 1em;
+  font-family: "Helvetica", sans-serif;
+  font-size: .9em;
+}
+
+
+
+/* All devices - These rules are now secondary to the fixes above */
+html{margin:0;padding:0;border:0;box-sizing:border-box;background-color:#fff;font-family:"Times New Roman";text-align:center}
+*,*:before,*:after{box-sizing:inherit}
+body{padding:0;margin:0;border:0;background-color:#fff}
+a{color:#000;text-decoration:none}
+a:hover{text-decoration:underline}
+#title{margin:0 auto;padding-top:none;color:#000;font-size:1.8em}
+#title-line-break{display:none}
+#title-space{display:inline}
+h2{min-width:100%}
+.p5-link{color:rgb(240,27,91);font-family:"Helvetica";font-weight:600}
+.p5-link:hover{text-decoration:none}
+#asterisk{position:absolute;font-size:.8em;transform:translate(-.5px,60%);-webkit-transform:translate(-.5px,60%);-moz-transform:translate(-.5px,60%);-o-transform:translate(-.5px,60%);-ms-transform:translate(-.5px,60%)}
+#content{margin:0 auto}
+.sketch-link{border-top:1px solid #222;border-right:1px solid #222;border-left:1px solid #000;border-bottom:1px solid #000}
+#bottom-space{position:relative;width:100%;min-height:100px}
+#footer-content{display:inline-block}
+.footer-link-inner:active{text-decoration:underline}
+.footer-link{width:20%;font-style:italic}
+
+/* Device-specific rules */
+@media only screen and (max-width:400px) and (max-height:240px){#header{line-height:1em}#physical-principles{font-size:.7em}#in{font-size:.5em}#top-line{font-size:1.2em}.p5-link{font-size:.7em}#title-line-break{display:inline}#title-space{display:none}#footer-content{font-size:.5em}}
+@media only screen and (min-device-width:320px) and (max-device-width:480px){#header{padding-top:1.5em;padding-bottom:1.5em}#title-line-break{display:inline}#title-space{display:none}#bottom-space{height:2em}#footer{padding-bottom:1.5em}#footer-content{font-size:0.9em}} /* CHANGED FROM 1.5em */
+@media only screen and (min-width:321px){#header{padding-top:2.5em;padding-bottom:1em}#title-line-break{display:none}#title-space{display:inline}}
+@media only screen and (max-width:375px){#header{padding-top:1.5em;padding-bottom:0;margin:0 auto}#title-line-break{display:inline}#title-space{display:none}#top-line{font-size:1em}#in{font-size:.2em}#bottom-space{height:6em}#footer{padding-bottom:1.5em}#footer-content{font-size:0.9em}} /* CHANGED FROM 1em */
+@media only screen and (min-device-width:768px) and (max-device-width:1024px){#in{font-size:1.2em;margin-right:5px}#footer-content{font-size:.5em}#title-line-break{display:none}#title-space{display:inline}}
+@media only screen and (min-device-width:768px) and (max-device-width:1024px) and (orientation:landscape){#header{padding-top:2em;padding-bottom:2em}#top-line{font-size:1.6em}.p5-link{font-size:1.6em}}
+@media only screen and (min-device-width:768px) and (max-device-width:1024px) and (orientation:portrait){#header{padding-top:3em;padding-bottom:2em}#top-line{font-size:1.6em}.p5-link{font-size:1.6em}}
+@media only screen and (min-width:1224px){#header{padding-top:2.5em;padding-bottom:2.5em}#top-line{font-size:1.6em}#in{font-size:1.3em;margin-right:5px}.p5-link{font-size:1.6em}#footer-content{font-size:1.2em}#title-line-break{display:none}#title-space{display:inline}}
+/* --- Responsive Title Line Break for Mobile --- */
+
+/* On screens 600px wide or less... */
+@media (max-width: 768px) {
+  .title-first-line {
+    display: block;
+  }
+
+  #footer a {
+    font-size: 16px;
+  }
+}
+
+/* --- Responsive Title Line Break --- */
+
+/* Default (Mobile View): Enforce the line break */
+#title-space {
+  display: none; /* Hide the space after "principles" */
+}
+#title-line-break {
+  display: block; /* Show the <br> tag to create the line break */
+}
+
+/* Desktop View (screens 768px and wider) */
+@media (min-width: 768px) {
+  #title-space {
+    display: inline; /* Show the space to connect the two parts */
+  }
+  #title-line-break {
+    display: none; /* Hide the <br> tag to make it one line */
+  }
+}
+
+#header {
+  padding-bottom: 2.5em;
+}
