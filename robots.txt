@@ -1,0 +1,12 @@
+User-agent: *
+
+# Block all URLs by default
+Disallow: /
+
+# Allow EXACTLY the root homepage
+Allow: /$
+
+# Allow the assets required to render the homepage properly
+Allow: /style.css
+Allow: /img/
+Allow: /favicon.ico
