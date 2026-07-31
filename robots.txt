@@ -1,12 +1,21 @@
 User-agent: *
 
-# Block all URLs by default
+# Block everything by default
 Disallow: /
 
-# Allow EXACTLY the root homepage
+# Allow the homepage
 Allow: /$
 
-# Allow the assets required to render the homepage properly
+# Allow specific folders
+Allow: /collide/
+Allow: /interest/
+Allow: /misc/
+Allow: /optics/
+Allow: /spring/
+Allow: /tank/
+Allow: /threebody/
+
+# Allow assets
 Allow: /style.css
 Allow: /img/
 Allow: /favicon.ico
