@@ -345,7 +345,6 @@ class Elevator {
         const currentFloorObj = this.building.getFloor(this.currentFloor);
         const waitingRiders = [...currentFloorObj.waiting];
 
-        // PRIORITIZE RIDERS: Co-directional passengers board first
         waitingRiders.sort((a, b) => {
             const aMatches = (a.intendedDirection === this.direction);
             const bMatches = (b.intendedDirection === this.direction);
@@ -801,6 +800,49 @@ function drawRoundRect(ctx, x, y, width, height, radius, fill, stroke) {
     if (stroke) ctx.stroke();
 }
 
+// Checks if pointer is over any active UP or DOWN button
+function isHoveringButton(clientX, clientY) {
+    if (isPromptActive) return false;
+
+    const rect = canvas.getBoundingClientRect();
+    const mouseX = clientX - rect.left;
+    const mouseY = clientY - rect.top;
+
+    const numFloors = building.numFloors;
+    const usableHeight = logicalHeight - (2 * marginY);
+    const floorHeight = Math.floor(usableHeight / numFloors);
+
+    for (let i = 0; i < numFloors; i++) {
+        const yLine = logicalHeight - marginY - (i * floorHeight);
+        const buttonY = yLine - 23;
+
+        if (mouseY >= buttonY - 2 && mouseY <= buttonY + BUTTON_HEIGHT + 2) {
+            // Check UP Button bounds
+            if (i < numFloors - 1 && mouseX >= buttonXUp - 2 && mouseX <= buttonXUp + BUTTON_WIDTH + 2) {
+                return true;
+            }
+            // Check DOWN Button bounds
+            if (i > 0 && mouseX >= buttonXDown - 2 && mouseX <= buttonXDown + BUTTON_WIDTH + 2) {
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+// Set cursor to pointer ONLY when hovering over clickable buttons
+canvas.addEventListener("mousemove", (e) => {
+    if (isHoveringButton(e.clientX, e.clientY)) {
+        canvas.style.cursor = "pointer";
+    } else {
+        canvas.style.cursor = "default";
+    }
+});
+
+canvas.addEventListener("mouseleave", () => {
+    canvas.style.cursor = "default";
+});
+
 function handleInputCoord(clientX, clientY) {
     if (isPromptActive) return;
 
@@ -868,14 +910,12 @@ togglePlayBtn.addEventListener("click", () => {
     else clearInterval(timerInterval);
 });
 
-// Reset simulation AND restore play state back to "Pause"
 resetBtn.addEventListener("click", () => {
     modal.style.display = "none";
     isPromptActive = false;
     nextRiderId = 1;
     building = new Building(10, 1);
     
-    // Explicitly reset to running state ("Pause" button)
     isRunning = true;
     updateButtonVisuals();
     
