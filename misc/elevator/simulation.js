@@ -345,7 +345,6 @@ class Elevator {
         const currentFloorObj = this.building.getFloor(this.currentFloor);
         const waitingRiders = [...currentFloorObj.waiting];
 
-        // PRIORITIZE RIDERS: Co-directional passengers board first
         waitingRiders.sort((a, b) => {
             const aMatches = (a.intendedDirection === this.direction);
             const bMatches = (b.intendedDirection === this.direction);
@@ -576,7 +575,6 @@ let isRunning = true;
 let timerInterval = null;
 let isPromptActive = false;
 
-// Track last stable dimensions to ignore mobile address-bar hide/show jitter while scrolling
 let lastAppliedWidth = 0;
 let lastAppliedHeight = 0;
 
@@ -589,12 +587,11 @@ function updateCanvasLayout(force = false) {
 
     if (w <= 0 || h <= 0) return;
 
-    // Check if the change is just mobile browser address bar collapse/expand (typically < 85px)
+    // Ignore small browser URL bar shifts (< 100px) so scrolling won't resize floors
     const heightDelta = Math.abs(h - lastAppliedHeight);
     const widthDelta = Math.abs(w - lastAppliedWidth);
 
-    if (!force && lastAppliedHeight > 0 && widthDelta === 0 && heightDelta < 85) {
-        // Minor vertical shift caused by address-bar scroll: DO NOT change floor spacing
+    if (!force && lastAppliedHeight > 0 && widthDelta === 0 && heightDelta < 100) {
         return;
     }
 
@@ -817,6 +814,7 @@ function drawRoundRect(ctx, x, y, width, height, radius, fill, stroke) {
     if (stroke) ctx.stroke();
 }
 
+// Checks if pointer is over button bounds
 function isHoveringButton(clientX, clientY) {
     if (isPromptActive) return false;
 
@@ -856,8 +854,9 @@ canvas.addEventListener("mouseleave", () => {
     canvas.style.cursor = "default";
 });
 
+// Click and Tap handler: Only triggers when tapping exact button areas
 function handleInputCoord(clientX, clientY) {
-    if (isPromptActive) return;
+    if (isPromptActive) return false;
 
     const rect = canvas.getBoundingClientRect();
     const mouseX = clientX - rect.left;
@@ -881,7 +880,7 @@ function handleInputCoord(clientX, clientY) {
                     rider.requestElevator();
                     render();
                 }
-                return;
+                return true;
             }
             // DOWN Button
             if (i > 0 && mouseX >= buttonXDown - 6 && mouseX <= buttonXDown + BUTTON_WIDTH + 6) {
@@ -891,20 +890,39 @@ function handleInputCoord(clientX, clientY) {
                     rider.requestElevator();
                     render();
                 }
-                return;
+                return true;
             }
         }
     }
+    return false;
 }
 
-canvas.addEventListener("mousedown", (e) => handleInputCoord(e.clientX, e.clientY));
+// Track touch distance so scrolling / swiping is NEVER intercepted as a button press
+let touchStartX = 0;
+let touchStartY = 0;
 
 canvas.addEventListener("touchstart", (e) => {
     if (e.touches.length === 1) {
-        const t = e.touches[0];
-        handleInputCoord(t.clientX, t.clientY);
+        touchStartX = e.touches[0].clientX;
+        touchStartY = e.touches[0].clientY;
     }
 }, { passive: true });
+
+canvas.addEventListener("touchend", (e) => {
+    if (e.changedTouches.length === 1) {
+        const deltaX = Math.abs(e.changedTouches[0].clientX - touchStartX);
+        const deltaY = Math.abs(e.changedTouches[0].clientY - touchStartY);
+
+        // Only register as button click if user tapped without dragging/scrolling (< 10px movement)
+        if (deltaX < 10 && deltaY < 10) {
+            handleInputCoord(e.changedTouches[0].clientX, e.changedTouches[0].clientY);
+        }
+    }
+}, { passive: true });
+
+canvas.addEventListener("click", (e) => {
+    handleInputCoord(e.clientX, e.clientY);
+});
 
 function updateButtonVisuals() {
     if (isRunning) {
@@ -947,13 +965,11 @@ function startTimer() {
     }, 1000);
 }
 
-// Observe container resize, but updateCanvasLayout ignores small height shifts caused by scrolling
 const resizeObserver = new ResizeObserver(() => {
     updateCanvasLayout(false);
 });
 resizeObserver.observe(canvasCard);
 
-// Force layout recalculation on genuine orientation flip
 window.addEventListener("orientationchange", () => {
     setTimeout(() => updateCanvasLayout(true), 150);
 });
