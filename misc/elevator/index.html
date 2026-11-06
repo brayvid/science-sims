@@ -12,8 +12,27 @@
     </script>
 
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <!-- Accessible Viewport -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Primary SEO Meta Tags -->
     <title>Elevator Simulator | Blake Rayvid</title>
+    <meta name="description" content="An interactive elevator simulation running the LOOK scheduling algorithm in the browser.">
+    <meta name="author" content="Blake Rayvid">
+    <link rel="canonical" href="https://sims.blakerayvid.com/misc/elevator/">
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://sims.blakerayvid.com/misc/elevator/">
+    <meta property="og:title" content="Elevator Simulator | Blake Rayvid">
+    <meta property="og:description" content="An interactive elevator simulation running the LOOK scheduling algorithm in the browser.">
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://sims.blakerayvid.com/misc/elevator/">
+    <meta property="twitter:title" content="Elevator Simulator | Blake Rayvid">
+    <meta property="twitter:description" content="An interactive elevator simulation running the LOOK scheduling algorithm in the browser.">
+
     <style>
         :root {
             --accent: #2c3e50;
@@ -84,11 +103,12 @@
             margin-bottom: 6px;
             flex-shrink: 0;
         }
-        .header-bar h2 {
+        .header-bar h1 {
             margin: 0;
             font-size: 15px;
             color: #333;
             letter-spacing: 0.3px;
+            font-weight: 700;
         }
         .controls {
             display: flex;
@@ -131,7 +151,6 @@
             overflow: hidden;
             position: relative;
         }
-        /* Default arrow cursor; JS dynamically switches to pointer only over clickable buttons */
         canvas {
             display: block;
             border: 1px solid #dcdcdc;
@@ -196,7 +215,7 @@
             padding: 14px 14px 6px 14px;
             text-align: center;
         }
-        .modal-header h4 {
+        .modal-header h2 {
             margin: 0;
             font-size: 14px;
             color: #111;
@@ -240,33 +259,34 @@
 </head>
 <body>
 
-    <div class="main-wrapper">
-        <div class="app-container">
-            <div class="header-bar">
-                <h2>Elevator Simulator</h2>
+    <!-- Semantic Main Landmark -->
+    <main class="main-wrapper" role="main" aria-label="Elevator Simulator Application">
+        <section class="app-container" aria-label="Simulation Canvas and Controls">
+            <header class="header-bar">
+                <h1>Elevator Simulator</h1>
                 <div class="controls">
-                    <button class="btn" id="togglePlayBtn">Pause</button>
-                    <button class="btn" id="resetBtn">Reset</button>
+                    <button class="btn" id="togglePlayBtn" aria-label="Pause or Resume Simulation">Pause</button>
+                    <button class="btn" id="resetBtn" aria-label="Reset Elevator Simulation">Reset</button>
                 </div>
-            </div>
+            </header>
 
-            <div class="canvas-card" id="canvasCard">
-                <canvas id="elevatorCanvas"></canvas>
+            <div class="canvas-card" id="canvasCard" role="region" aria-label="Interactive Building Visualizer">
+                <canvas id="elevatorCanvas" aria-label="Graphical Elevator Shaft and Floor Lines" role="img"></canvas>
             </div>
-        </div>
+        </section>
 
         <footer>&copy; 2026 <a href="https://blakerayvid.com/2026/07/01/elevator-simulator/">Blake Rayvid</a>. All rights reserved.</footer>
-    </div>
+    </main>
 
-    <!-- Boarding Destination Modal -->
-    <div id="destinationModal" class="modal-overlay">
+    <!-- Boarding Destination Modal with Proper ARIA Dialog Semantics -->
+    <div id="destinationModal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
         <div class="modal-card">
             <div class="modal-header">
-                <h4 id="modalTitle">Rider enters Elevator</h4>
+                <h2 id="modalTitle">Rider enters Elevator</h2>
                 <p>Please select their destination floor below:</p>
             </div>
             <div class="modal-body">
-                <div id="modalFloorGrid" class="floor-grid"></div>
+                <div id="modalFloorGrid" class="floor-grid" role="group" aria-label="Floor Buttons"></div>
             </div>
         </div>
     </div>
