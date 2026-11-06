@@ -345,6 +345,7 @@ class Elevator {
         const currentFloorObj = this.building.getFloor(this.currentFloor);
         const waitingRiders = [...currentFloorObj.waiting];
 
+        // PRIORITIZE RIDERS: Co-directional passengers board first
         waitingRiders.sort((a, b) => {
             const aMatches = (a.intendedDirection === this.direction);
             const bMatches = (b.intendedDirection === this.direction);
@@ -543,7 +544,7 @@ class Building {
 }
 
 // ==============================================================================
-// FULL-HEIGHT DYNAMIC CANVAS & CONTROLLER
+// STABLE VIEWPORT HIGH-DPI CANVAS CONTROLLER
 // ==============================================================================
 
 let logicalWidth = 620;
@@ -575,7 +576,11 @@ let isRunning = true;
 let timerInterval = null;
 let isPromptActive = false;
 
-function updateCanvasLayout() {
+// Track last stable dimensions to ignore mobile address-bar hide/show jitter while scrolling
+let lastAppliedWidth = 0;
+let lastAppliedHeight = 0;
+
+function updateCanvasLayout(force = false) {
     if (!canvasCard) return;
 
     const rect = canvasCard.getBoundingClientRect();
@@ -583,6 +588,18 @@ function updateCanvasLayout() {
     const h = Math.floor(rect.height);
 
     if (w <= 0 || h <= 0) return;
+
+    // Check if the change is just mobile browser address bar collapse/expand (typically < 85px)
+    const heightDelta = Math.abs(h - lastAppliedHeight);
+    const widthDelta = Math.abs(w - lastAppliedWidth);
+
+    if (!force && lastAppliedHeight > 0 && widthDelta === 0 && heightDelta < 85) {
+        // Minor vertical shift caused by address-bar scroll: DO NOT change floor spacing
+        return;
+    }
+
+    lastAppliedWidth = w;
+    lastAppliedHeight = h;
 
     logicalWidth = w;
     logicalHeight = h;
@@ -800,7 +817,6 @@ function drawRoundRect(ctx, x, y, width, height, radius, fill, stroke) {
     if (stroke) ctx.stroke();
 }
 
-// Checks if pointer is over any active UP or DOWN button
 function isHoveringButton(clientX, clientY) {
     if (isPromptActive) return false;
 
@@ -817,11 +833,9 @@ function isHoveringButton(clientX, clientY) {
         const buttonY = yLine - 23;
 
         if (mouseY >= buttonY - 2 && mouseY <= buttonY + BUTTON_HEIGHT + 2) {
-            // Check UP Button bounds
             if (i < numFloors - 1 && mouseX >= buttonXUp - 2 && mouseX <= buttonXUp + BUTTON_WIDTH + 2) {
                 return true;
             }
-            // Check DOWN Button bounds
             if (i > 0 && mouseX >= buttonXDown - 2 && mouseX <= buttonXDown + BUTTON_WIDTH + 2) {
                 return true;
             }
@@ -830,7 +844,6 @@ function isHoveringButton(clientX, clientY) {
     return false;
 }
 
-// Set cursor to pointer ONLY when hovering over clickable buttons
 canvas.addEventListener("mousemove", (e) => {
     if (isHoveringButton(e.clientX, e.clientY)) {
         canvas.style.cursor = "pointer";
@@ -934,13 +947,19 @@ function startTimer() {
     }, 1000);
 }
 
+// Observe container resize, but updateCanvasLayout ignores small height shifts caused by scrolling
 const resizeObserver = new ResizeObserver(() => {
-    updateCanvasLayout();
+    updateCanvasLayout(false);
 });
 resizeObserver.observe(canvasCard);
 
+// Force layout recalculation on genuine orientation flip
+window.addEventListener("orientationchange", () => {
+    setTimeout(() => updateCanvasLayout(true), 150);
+});
+
 window.addEventListener("load", () => {
-    updateCanvasLayout();
+    updateCanvasLayout(true);
     updateButtonVisuals();
     startTimer();
 });
