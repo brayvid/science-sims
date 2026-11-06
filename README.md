@@ -23,6 +23,9 @@
 			<tr>
 				<td><a href="https://sims.blakerayvid.com/threebody">Three Body Problem</a></td>
 			</tr>
+			<tr>
+				<td><a href="https://sims.blakerayvid.com/misc/elevator">Elevator Simulator</a></td>
+			</tr>
 		</table>
 	</section>
 </body>

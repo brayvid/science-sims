@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-0X17N0BWYV"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-0X17N0BWYV');
+    </script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Elevator Simulator | Blake Rayvid</title>
+    <style>
+        :root {
+            --accent: #2c3e50;
+            --accent-hover: #1a252f;
+            --accent-light: #edf2f7;
+            --accent-border: #cbd5e1;
+        }
+
+        * {
+            box-sizing: border-box;
+            user-select: none;
+            -webkit-user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+        html, body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            background-color: #e9ecef;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            touch-action: manipulation;
+            overflow-x: hidden;
+            overflow-y: auto;
+        }
+        .main-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            min-height: 100vh;
+            min-height: 100dvh;
+            padding: 8px 10px 0 10px;
+        }
+        .app-container {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            height: calc(100vh - 16px);
+            height: calc(100dvh - 16px);
+            max-width: 720px;
+            max-height: 860px;
+            background: #fff;
+            padding: 10px 12px;
+            border-radius: 8px;
+            box-shadow: 0 4px 14px rgba(0,0,0,0.12);
+            flex-shrink: 0;
+        }
+        @media (max-width: 650px) {
+            .main-wrapper {
+                padding: 0;
+            }
+            .app-container {
+                max-width: 100%;
+                height: 100vh;
+                height: 100dvh;
+                border-radius: 0;
+                box-shadow: none;
+                padding: 6px 8px 8px 8px;
+            }
+        }
+        .header-bar {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #e2e2e2;
+            padding-bottom: 6px;
+            margin-bottom: 6px;
+            flex-shrink: 0;
+        }
+        .header-bar h2 {
+            margin: 0;
+            font-size: 15px;
+            color: #333;
+            letter-spacing: 0.3px;
+        }
+        .controls {
+            display: flex;
+            gap: 8px;
+        }
+        button.btn {
+            padding: 6px 14px;
+            font-size: 13px;
+            font-weight: bold;
+            border: 1px solid #bbb;
+            border-radius: 4px;
+            background: #fff;
+            color: #333;
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+        button.btn:hover:not(:disabled) {
+            background: #f8f9fa;
+        }
+        button.btn:active:not(:disabled) {
+            transform: scale(0.96);
+        }
+
+        button.btn.paused {
+            background: var(--accent);
+            color: #fff;
+            border-color: var(--accent-hover);
+        }
+        button.btn.paused:hover:not(:disabled) {
+            background: var(--accent-hover);
+        }
+
+        .canvas-card {
+            flex: 1;
+            min-height: 0;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            position: relative;
+        }
+        canvas {
+            display: block;
+            border: 1px solid #dcdcdc;
+            border-radius: 4px;
+            background-color: #f5f5f5;
+            cursor: pointer;
+            width: 100%;
+            height: 100%;
+        }
+
+        footer {
+            width: 100%;
+            text-align: center;
+            padding: 24px 10px 28px 10px;
+            font-size: 13px;
+            color: #555;
+            letter-spacing: 0.2px;
+            user-select: text;
+            -webkit-user-select: text;
+        }
+        footer a {
+            color: var(--accent);
+            text-decoration: none;
+            font-weight: 600;
+        }
+        footer a:hover {
+            color: var(--accent-hover);
+            text-decoration: underline;
+        }
+
+        /* Destination Selection Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            height: 100dvh;
+            background: rgba(0, 0, 0, 0.45);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            padding: 15px;
+        }
+        .modal-card {
+            background: #ffffff;
+            width: 100%;
+            max-width: 360px;
+            border-radius: 8px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+            overflow: hidden;
+            border: 1px solid #ccc;
+            animation: fadeIn 0.15s ease-out;
+        }
+        @keyframes fadeIn {
+            from { transform: scale(0.96); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+        .modal-header {
+            padding: 14px 14px 6px 14px;
+            text-align: center;
+        }
+        .modal-header h4 {
+            margin: 0;
+            font-size: 14px;
+            color: #111;
+        }
+        .modal-header p {
+            margin: 4px 0 0 0;
+            font-size: 12px;
+            color: #555;
+        }
+        .modal-body {
+            padding: 10px 14px 14px 14px;
+        }
+        .floor-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            max-height: 48vh;
+            overflow-y: auto;
+        }
+        .floor-btn {
+            padding: 10px 4px;
+            font-size: 13px;
+            font-weight: bold;
+            border: 1px solid var(--accent-border);
+            background: var(--accent-light);
+            color: var(--accent);
+            border-radius: 6px;
+            cursor: pointer;
+        }
+        .floor-btn:active:not(:disabled) {
+            background: var(--accent);
+            color: #fff;
+        }
+        .floor-btn:disabled {
+            border-color: #ddd;
+            background: #f2f2f2;
+            color: #aaa;
+            cursor: not-allowed;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="main-wrapper">
+        <div class="app-container">
+            <div class="header-bar">
+                <h2>Elevator Simulator</h2>
+                <div class="controls">
+                    <button class="btn" id="togglePlayBtn">Pause</button>
+                    <button class="btn" id="resetBtn">Reset</button>
+                </div>
+            </div>
+
+            <div class="canvas-card" id="canvasCard">
+                <canvas id="elevatorCanvas"></canvas>
+            </div>
+        </div>
+
+        <footer>&copy; 2026 <a href="https://blakerayvid.com">Blake Rayvid</a>. All rights reserved.</footer>
+    </div>
+
+    <!-- Boarding Destination Modal -->
+    <div id="destinationModal" class="modal-overlay">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h4 id="modalTitle">Rider enters Elevator</h4>
+                <p>Please select their destination floor below:</p>
+            </div>
+            <div class="modal-body">
+                <div id="modalFloorGrid" class="floor-grid"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="simulation.js"></script>
+</body>
+</html>
